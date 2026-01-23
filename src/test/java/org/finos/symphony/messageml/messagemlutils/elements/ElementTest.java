@@ -106,41 +106,58 @@ public class ElementTest {
 
   @Test
   public void testMessageMLBetaTrue() throws Exception {
+    // Create context with beta=true and use beta="true" attribute
+    MessageMLContext betaContext = new MessageMLContext(dataProvider, true);
     String input = "<messageML beta=\"true\">Hello world!</messageML>";
-    context.parseMessageML(input, null, MessageML.MESSAGEML_VERSION);
+    betaContext.parseMessageML(input, null, MessageML.MESSAGEML_VERSION);
 
-    MessageML messageML = context.getMessageML();
+    MessageML messageML = betaContext.getMessageML();
     assertTrue("Beta should be true", messageML.isBeta());
     assertEquals("PresentationML", "<div data-format=\"PresentationML\" data-version=\"2.0\">Hello world!</div>",
-        context.getPresentationML());
+        betaContext.getPresentationML());
   }
 
   @Test
   public void testMessageMLBetaFalse() throws Exception {
+    // Create context with beta=true but use beta="false" attribute
+    MessageMLContext betaContext = new MessageMLContext(dataProvider, true);
     String input = "<messageML beta=\"false\">Hello world!</messageML>";
-    context.parseMessageML(input, null, MessageML.MESSAGEML_VERSION);
+    betaContext.parseMessageML(input, null, MessageML.MESSAGEML_VERSION);
 
-    MessageML messageML = context.getMessageML();
+    MessageML messageML = betaContext.getMessageML();
     assertFalse("Beta should be false", messageML.isBeta());
     assertEquals("PresentationML", "<div data-format=\"PresentationML\" data-version=\"2.0\">Hello world!</div>",
-        context.getPresentationML());
+        betaContext.getPresentationML());
   }
 
   @Test
   public void testMessageMLBetaDefault() throws Exception {
+    // Default constructor should have beta=false, and without beta attribute it stays false
+    MessageMLContext defaultContext = new MessageMLContext(dataProvider);
     String input = "<messageML>Hello world!</messageML>";
-    context.parseMessageML(input, null, MessageML.MESSAGEML_VERSION);
+    defaultContext.parseMessageML(input, null, MessageML.MESSAGEML_VERSION);
 
-    MessageML messageML = context.getMessageML();
+    MessageML messageML = defaultContext.getMessageML();
     assertFalse("Beta should default to false", messageML.isBeta());
   }
 
   @Test
   public void testMessageMLBetaInvalid() throws Exception {
+    MessageMLContext betaContext = new MessageMLContext(dataProvider, true);
     String input = "<messageML beta=\"invalid\">Hello world!</messageML>";
     expectedException.expect(InvalidInputException.class);
     expectedException.expectMessage("Attribute \"beta\" of element \"messageML\" can only be one of the following values: [true, false].");
-    context.parseMessageML(input, null, MessageML.MESSAGEML_VERSION);
+    betaContext.parseMessageML(input, null, MessageML.MESSAGEML_VERSION);
+  }
+
+  @Test
+  public void testMessageMLBetaNotAllowedWithoutBetaContext() throws Exception {
+    // Default context (beta=false) should not allow beta="true" attribute
+    MessageMLContext nonBetaContext = new MessageMLContext(dataProvider);
+    String input = "<messageML beta=\"true\">Hello world!</messageML>";
+    expectedException.expect(InvalidInputException.class);
+    expectedException.expectMessage("Attribute \"beta\" on element \"messageML\" is only allowed when MessageMLContext is initialized with beta=true");
+    nonBetaContext.parseMessageML(input, null, MessageML.MESSAGEML_VERSION);
   }
 
   @Test

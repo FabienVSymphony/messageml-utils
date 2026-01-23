@@ -193,6 +193,13 @@ public class MessageML extends Element {
     return beta;
   }
 
+  /**
+   * Set whether this message is a beta message.
+   */
+  public void setBeta(boolean beta) {
+    this.beta = beta;
+  }
+
   @Override
   public String getPresentationMLTag() {
     return PRESENTATIONML_TAG;

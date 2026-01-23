@@ -28,7 +28,7 @@ public class SymAiContext extends Entity {
 
     @Override
     public void validate() throws InvalidInputException {
-        // Check if root MessageML is in beta mode
+        // Check if root MessageML has beta="true"
         MessageML root = getRoot();
         if (root == null || !root.isBeta()) {
             throw new InvalidInputException(

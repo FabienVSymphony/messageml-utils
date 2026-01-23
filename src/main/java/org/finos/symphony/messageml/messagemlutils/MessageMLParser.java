@@ -148,6 +148,7 @@ public class MessageMLParser {
   });
 
   private final IDataProvider dataProvider;
+  private final boolean beta;
 
   private BiContext biContext;
   private FormatEnum messageFormat;
@@ -167,7 +168,12 @@ public class MessageMLParser {
   }
 
   MessageMLParser(IDataProvider dataProvider) {
+    this(dataProvider, false);
+  }
+
+  MessageMLParser(IDataProvider dataProvider, boolean beta) {
     this.dataProvider = dataProvider;
+    this.beta = beta;
   }
 
   /**
@@ -373,6 +379,13 @@ public class MessageMLParser {
 
     MessageML result = new MessageML(messageFormat, version);
     result.buildAll(this, docElement);
+
+    // Validate that beta attribute on messageML is only allowed when context permits it
+    if (result.isBeta() && !beta) {
+      throw new InvalidInputException(
+          "Attribute \"beta\" on element \"messageML\" is only allowed when MessageMLContext is initialized with beta=true");
+    }
+
     result.enhanceFinancialTags(result, dataProvider);
     result.validate();
     return result;
