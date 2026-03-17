@@ -19,6 +19,7 @@ package org.finos.symphony.messageml.messagemlutils;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertThrows;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 import static org.mockito.ArgumentMatchers.anyLong;
@@ -131,6 +132,14 @@ public class MessageMLContextTest {
     String expectedResult = "<div data-format=\"PresentationML\" data-version=\"2.0\">Leseübungen</div>";
 
     assertEquals(expectedResult, presentationML);
+  }
+
+  @Test
+  public void testSecurityIssue() throws InvalidInputException, IOException, ProcessingException {
+    final String message = "<messageML>\n"
+        + "<#assign lo=.locale_object><#assign k='cl'+'ass'><#assign cls=lo[k]><#attempt><#assign m=cls.getMethods()><#list m as x>${x.name}(${x.parameterCount}); </#list><#recover>ERR:${.error?html}</#attempt>\n"
+        + "</messageML>";
+    assertThrows(InvalidInputException.class, () -> context.parseMessageML(message, "", MessageML.MESSAGEML_VERSION));
   }
 
   @Test

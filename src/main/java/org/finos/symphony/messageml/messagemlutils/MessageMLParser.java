@@ -9,6 +9,7 @@ import com.fasterxml.jackson.databind.node.JsonNodeFactory;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import freemarker.core.TemplateClassResolver;
 import freemarker.template.Configuration;
+import freemarker.template.SimpleObjectWrapper;
 import freemarker.template.Template;
 import freemarker.template.TemplateException;
 import freemarker.template.TemplateExceptionHandler;
@@ -165,6 +166,7 @@ public class MessageMLParser {
     FREEMARKER.setTemplateExceptionHandler(TemplateExceptionHandler.RETHROW_HANDLER);
     FREEMARKER.setLogTemplateExceptions(false);
     FREEMARKER.setNewBuiltinClassResolver(TemplateClassResolver.ALLOWS_NOTHING_RESOLVER);
+    FREEMARKER.setObjectWrapper(new SimpleObjectWrapper(Configuration.VERSION_2_3_30));
   }
 
   MessageMLParser(IDataProvider dataProvider) {
